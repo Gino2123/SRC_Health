@@ -1,43 +1,51 @@
-from collections.abc import AsyncIterator
+# from collections.abc import AsyncIterator
+
+# import pytest
+# import pytest_asyncio
+# from httpx import ASGITransport, AsyncClient
+# from sqlalchemy import select
+# from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+# from app.database import Base, get_session
+# from app.main import app
+# from app.models import RefreshSession, User
+# from app.security import password_hasher
+
+
+# @pytest_asyncio.fixture
+# async def session_factory(tmp_path) -> AsyncIterator[async_sessionmaker[AsyncSession]]:
+#     engine = create_async_engine(f"sqlite+aiosqlite:///{tmp_path / 'test.db'}")
+#     async with engine.begin() as connection:
+#         await connection.run_sync(Base.metadata.create_all)
+
+#     factory = async_sessionmaker(engine, expire_on_commit=False)
+#     yield factory
+#     await engine.dispose()
+
+
+# @pytest_asyncio.fixture
+# async def client(
+#     session_factory: async_sessionmaker[AsyncSession],
+# ) -> AsyncIterator[AsyncClient]:
+#     async def override_get_session() -> AsyncIterator[AsyncSession]:
+#         async with session_factory() as session:
+#             yield session
+
+#     app.dependency_overrides[get_session] = override_get_session
+#     async with AsyncClient(
+#         transport=ASGITransport(app=app),
+#         base_url="http://test",
+#     ) as test_client:
+#         yield test_client
+#     app.dependency_overrides.clear()
 
 import pytest
-import pytest_asyncio
-from httpx import ASGITransport, AsyncClient
+from httpx import AsyncClient
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.database import Base, get_session
-from app.main import app
 from app.models import RefreshSession, User
 from app.security import password_hasher
-
-
-@pytest_asyncio.fixture
-async def session_factory(tmp_path) -> AsyncIterator[async_sessionmaker[AsyncSession]]:
-    engine = create_async_engine(f"sqlite+aiosqlite:///{tmp_path / 'test.db'}")
-    async with engine.begin() as connection:
-        await connection.run_sync(Base.metadata.create_all)
-
-    factory = async_sessionmaker(engine, expire_on_commit=False)
-    yield factory
-    await engine.dispose()
-
-
-@pytest_asyncio.fixture
-async def client(
-    session_factory: async_sessionmaker[AsyncSession],
-) -> AsyncIterator[AsyncClient]:
-    async def override_get_session() -> AsyncIterator[AsyncSession]:
-        async with session_factory() as session:
-            yield session
-
-    app.dependency_overrides[get_session] = override_get_session
-    async with AsyncClient(
-        transport=ASGITransport(app=app),
-        base_url="http://test",
-    ) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
